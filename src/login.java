@@ -11,6 +11,9 @@ import java.awt.Font;
 import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 public class login extends JFrame {
 
 	private JPanel contentPane;
@@ -18,6 +21,7 @@ public class login extends JFrame {
 	private JPasswordField txtpassword;
 	Connection con;
 	PreparedStatement pst;
+	
 
 	/**
 	 * Launch the application.
@@ -27,6 +31,8 @@ public class login extends JFrame {
 			public void run() {
 				try {
 					login frame = new login();
+//					frame.pack();
+					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -50,6 +56,7 @@ public class login extends JFrame {
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
+		panel.setBackground(new Color(120, 255, 41));
 		panel.setBounds(6, 6, 278, 85);
 		contentPane.add(panel);
 		panel.setLayout(null);
@@ -71,14 +78,24 @@ public class login extends JFrame {
 		txtusername.setColumns(10);
 		
 		txtpassword = new JPasswordField();
+		txtpassword.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+					loginuser();
+	            }
+			}
+		});
 		txtpassword.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
 		txtpassword.setBounds(111, 43, 156, 26);
 		panel.add(txtpassword);
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(120, 255, 41));
 		panel_1.setBounds(6, 93, 278, 43);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
+		
 		
 		JButton btnlogin = new JButton("LogIn");
 		btnlogin.addActionListener(new ActionListener() {
@@ -103,6 +120,8 @@ public class login extends JFrame {
 	{	
 	   String username = txtusername.getText();
 	   String password = String.valueOf(txtpassword.getPassword());
+	   String company = "company";
+	   String role = "role";
 	   if (username.isEmpty() || password.isEmpty()) {
 	       JOptionPane.showMessageDialog(this,
 	             "Please enter all fields",
@@ -110,12 +129,11 @@ public class login extends JFrame {
 	             JOptionPane.ERROR_MESSAGE);
 	       return;
 	    }
-//	   Class.forName("com.mysql.jdbc.Driver");
        con = DriverManager.getConnection("jdbc:mysql://localhost:3308/fcmc","root","");
-       pst=con.prepareStatement("SELECT * FROM TBL_USER WHERE username = ? and pass_word = ?");
+       pst = con.prepareStatement("SELECT * FROM TBL_USER WHERE username = ? and pass_word = ?");
        pst.setString(1,username);
        pst.setString(2,password);
-       ResultSet rs=pst.executeQuery();
+       ResultSet rs = pst.executeQuery();
        if(rs.next( )== false)
        {
     	   JOptionPane.showMessageDialog(this,
@@ -126,16 +144,12 @@ public class login extends JFrame {
        }
        else
        {
-    	   new frmmain().setVisible(true);
-
+           company = rs.getString("company");
+           role = rs.getString("role1");
+    	   new frmmain(username,company,role).setVisible(true);
            this.dispose();
        }
 	}	
-//	catch(ClassNotFoundException e)
-//	{
-//	  System.err.println(e);
-//	}
-	
 	catch(SQLException e)
 	{
 	  System.err.println(e);

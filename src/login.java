@@ -130,7 +130,7 @@ public class login extends JFrame {
 	       return;
 	    }
        con = DriverManager.getConnection("jdbc:mysql://localhost:3308/fcmc","root","");
-       pst = con.prepareStatement("SELECT * FROM TBL_USER WHERE username = ? and pass_word = ?");
+       pst = con.prepareStatement("SELECT * FROM TBL_USER WHERE USERNAME = ? and PASS_WORD = ?");
        pst.setString(1,username);
        pst.setString(2,password);
        ResultSet rs = pst.executeQuery();
